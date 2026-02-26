@@ -5,16 +5,16 @@ export const payorCostMockData = {
         name: "*NATIONAL: Cigna ALL SITES 02/01/21",
         items: [
           {
-            cleanDrug: "Skilled Nursing Additional - 99602",
-            hcpc: "99602",
-            costGram: 0.0,
-            expectedGram: 70.0,
-          },
-          {
             cleanDrug: "Skilled Nursing Initial 2hrs-99601",
             hcpc: "99601",
             costGram: 0.0,
             expectedGram: 140.0,
+          },
+          {
+            cleanDrug: "Skilled Nursing Additional - 99602",
+            hcpc: "99602",
+            costGram: 0.0,
+            expectedGram: 70.0,
           },
           {
             cleanDrug: "Bivigam",
@@ -146,7 +146,7 @@ export const payorCostMockData = {
             cleanDrug: "Per Diem SCIG",
             hcpc: "S9338",
             costGram: 0.0,
-            expectedGram: 70.0,
+            expectedGram: 50.0,
           },
         ],
       },
@@ -154,16 +154,16 @@ export const payorCostMockData = {
         name: "*NATIONAL: UHC ALL Sites ppoOne",
         items: [
           {
-            cleanDrug: "Skilled Nursing Additional - 99602",
-            hcpc: "99602",
-            costGram: 0.0,
-            expectedGram: 65.0,
-          },
-          {
             cleanDrug: "Skilled Nursing Initial 2hrs-99601",
             hcpc: "99601",
             costGram: 0.0,
             expectedGram: 130.0,
+          },
+          {
+            cleanDrug: "Skilled Nursing Additional - 99602",
+            hcpc: "99602",
+            costGram: 0.0,
+            expectedGram: 65.0,
           },
           {
             cleanDrug: "Bivigam",
