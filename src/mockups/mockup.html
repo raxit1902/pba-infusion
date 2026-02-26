@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>PBA | UI Mockup</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#334155",
+            "background-light": "#ffffff",
+            "background-dark": "#0f172a",
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+  <header
+    class="bg-white/10 backdrop-blur-md dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-14 items-center">
+        <div class="flex items-center gap-2">
+          <span class="material-icons-outlined text-slate-600">analytics</span>
+          <h1 class="text-lg font-semibold text-slate-800 dark:text-white">Patient Benefit Analytics Tool</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <span class="material-icons-outlined text-sm text-slate-400">person</span>
+            <span class="text-xs font-medium text-slate-600">Clinical Admin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <section class="mb-6 p-4 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" for="mrn">MRN
+            (Medical Record Number)</label>
+          <input
+            class="block w-full border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white focus:ring-slate-500 focus:border-slate-500 rounded-sm sm:text-sm"
+            id="mrn" placeholder="Enter MRN..." type="text" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" for="referral">Referral</label>
+          <select
+            class="block w-full border-slate-300 dark:border-slate-600 dark:bg-slate-900 dark:text-white focus:ring-slate-500 focus:border-slate-500 rounded-sm sm:text-sm"
+            id="referral">
+            <option value="">Select based on MRN</option>
+            <option value="ref-001">REF-8842 (Dr. Smith)</option>
+            <option value="ref-002">REF-1092 (Internal Clinic)</option>
+          </select>
+        </div>
+        <div>
+          <button class="bg-slate-700 text-white px-4 py-2 rounded-sm font-bold text-sm border border-slate-800">
+            Retrieve Data
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Components -->
+    <nav class="flex border-b border-slate-300 dark:border-slate-700 mb-6 space-x-6 overflow-x-auto">
+      <button class="border-b-2 border-slate-800 py-3 px-1 text-sm font-bold text-slate-800">Detail</button>
+      <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Clinical
+        Appropriateness</button>
+      <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Payor
+        Restrictions</button>
+      <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Gram
+        Commitment</button>
+      <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Margin</button>
+    </nav>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div
+        class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 overflow-hidden flex flex-col">
+        <div
+          class="bg-slate-50 dark:bg-slate-700/50 px-4 py-2 border-b border-slate-300 dark:border-slate-700 flex items-center gap-2">
+          <h3 class="font-bold text-slate-800 dark:text-white uppercase tracking-wider text-[10px]">Member Info</h3>
+        </div>
+        <div class="p-4 flex-grow">
+          <dl class="space-y-2">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">First Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Last Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">DOB</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Address</dt>
+              <dd class="text-xs text-slate-400 text-right">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Contact</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1">
+              <dt class="text-xs font-medium text-slate-500">Salesrep Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 overflow-hidden flex flex-col">
+        <div
+          class="bg-slate-50 dark:bg-slate-700/50 px-4 py-2 border-b border-slate-300 dark:border-slate-700 flex items-center gap-2">
+          <h3 class="font-bold text-slate-800 dark:text-white uppercase tracking-wider text-[10px]">Prescriber Info</h3>
+        </div>
+        <div class="p-4 flex-grow">
+          <dl class="space-y-2">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">First Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Last Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Contact</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1">
+              <dt class="text-xs font-medium text-slate-500">NPI Number</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div
+        class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 overflow-hidden flex flex-col">
+        <div
+          class="bg-slate-50 dark:bg-slate-700/50 px-4 py-2 border-b border-slate-300 dark:border-slate-700 flex items-center gap-2">
+          <h3 class="font-bold text-slate-800 dark:text-white uppercase tracking-wider text-[10px]">Payor/Policy Info
+          </h3>
+        </div>
+        <div class="p-4 flex-grow">
+          <dl class="space-y-2">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Payor Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Group Name</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100 dark:border-slate-700">
+              <dt class="text-xs font-medium text-slate-500">Payor Notes</dt>
+              <dd class="text-xs text-slate-400 text-right">Autofilled</dd>
+            </div>
+            <div class="flex justify-between items-center py-1">
+              <dt class="text-xs font-medium text-slate-500">Place of Service</dt>
+              <dd class="text-xs text-slate-400">Autofilled</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Tab 2  -->
+    <div class="my-8">
+      <nav class="flex border-b border-slate-300 mb-6 space-x-6 overflow-x-auto">
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Detail</button>
+        <button class="border-b-2 border-slate-800 py-3 px-1 text-sm font-bold text-slate-800">Clinical
+          Appropriateness</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Payor
+          Restrictions</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Gram
+          Commitment</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Margin</button>
+      </nav>
+      <div class="border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800">
+        <div class="">
+          <!-- Conditions Checklist -->
+          <div class=" p-4">
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 underline uppercase mb-4">Check all Conditions
+              that apply
+            </h3>
+            <table class="w-full text-xs border-collapse">
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-600">
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hypersensitivity to Ig</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">IgA Deficiency with anti-IgA antibodies</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hypersensitivity to Corn</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hereditary intolerance to Fructose</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hypersensitivity to Hyaluronidase</td>
+                  <td class="w-8 text-right"><input type="checkbox" class="h-3.5 w-3.5 rounded-sm border-slate-400" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hypersensitivity to Human Albumin</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Hyperprolinemia</td>
+                  <td class="w-8 text-right"><input type="checkbox" class="h-3.5 w-3.5 rounded-sm border-slate-400" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Neonate &lt; 3 months</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">&gt; 65 years of age</td>
+                  <td class="w-8 text-right"><input type="checkbox" class="h-3.5 w-3.5 rounded-sm border-slate-400" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Diabetes</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Renal Insufficiency/Impairment</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Cardiac Insufficiency</td>
+                  <td class="w-8 text-right"><input type="checkbox" class="h-3.5 w-3.5 rounded-sm border-slate-400" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 text-slate-800 dark:text-slate-200">Pulmonary Insufficiency</td>
+                  <td class="w-8 text-right"><input type="checkbox" checked
+                      class="h-3.5 w-3.5 rounded-sm border-slate-400" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div class="mb-8">
+      <nav class="flex border-b border-slate-300 mb-6 space-x-6 overflow-x-auto">
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Detail</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Clinical
+          Appropriateness</button>
+        <button class="border-b-2 border-slate-800 py-3 px-1 text-sm font-bold text-slate-800">Payor
+          Restrictions</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Gram
+          Commitment</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Margin</button>
+      </nav>
+      <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 p-4">
+        <div class="mb-6">
+          <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase underline mb-2">Additional BV Notes
+          </h3>
+          <div class="border border-slate-200 dark:border-slate-700 p-2 min-h-[40px] text-xs text-slate-500">initiate
+            prior authorization, you can coordinate with UMR Care at phone number 866-922-8266 DO NOT USE FOR UMR
+            COMPASS ROSE PATIENTS- See Compass Rose UMR OptumRX payer -MR 1/19/24 UMR plans are TPA Third Party
+            Administrator plans and Networks can vary. This CPR payer is for UMR plans utilizing the UHC Network - KR
+            Restricted as of 9/15/21 - per Kathy B. - DMI 9/15/21 updated UHC ppoOne NDC payer EFFECTIVE 2/1/16 y.</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase underline mb-2">Drug Formulary</h3>
+            <table class="w-full border border-slate-300 text-xs">
+              <tbody class="divide-y divide-slate-200">
+                <tr class="bg-slate-50">
+                  <td class="py-1.5 px-3 border-r border-slate-300 font-bold">IVIG</td>
+                  <td class="py-1.5 px-3 font-bold">SCIG</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-3 border-r border-slate-300">Drug A</td>
+                  <td class="py-1.5 px-3">Drug A</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-3 border-r border-slate-300">Drug B</td>
+                  <td class="py-1.5 px-3">Drug B</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-3 border-r border-slate-300">Drug C</td>
+                  <td class="py-1.5 px-3">Drug C</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-3 border-r border-slate-300">Drug D</td>
+                  <td class="py-1.5 px-3">Drug D</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase underline mb-2">Payor Guide </h3>
+            <table class="w-full border border-slate-300 text-xs">
+              <tbody class="divide-y divide-slate-200">
+                <tr>
+                  <td class="py-1.5 px-3 font-medium">Is whitebagging allowed?</td>
+                  <td class="py-1.5 px-3 text-right">Yes</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-3 font-medium">Is Optum owned AIS allowed?</td>
+                  <td class="py-1.5 px-3 text-right">Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4 -->
+    <div class="mb-8">
+      <nav class="flex border-b border-slate-300 mb-6 space-x-6 overflow-x-auto">
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Detail</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Clinical
+          Appropriateness</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Payor
+          Restrictions</button>
+        <button class="border-b-2 border-slate-800 py-3 px-1 text-sm font-bold text-slate-800">Gram
+          Commitment</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Margin</button>
+      </nav>
+      <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 p-4">
+        <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase underline mb-4">Gram Commitment</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+              <tr class="bg-slate-50">
+                <th class="border border-slate-300 py-2 px-3 text-left font-bold">Drug Name</th>
+                <th class="border border-slate-300 py-2 px-3 text-right font-bold">Unit Consumed till Date</th>
+                <th class="border border-slate-300 py-2 px-3 text-right font-bold">Committed 2025</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">Gammagard</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">126934</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">2101389</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="border border-slate-300 py-1.5 px-3">Hizentra</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">177592</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">1800000</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="border border-slate-300 py-1.5 px-3">Gamunex-C</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">144658</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">1300000</td>
+              </tr>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">Gammaplex</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">51985</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">888000</td>
+              </tr>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">Cuvitru</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">60310</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">618001</td>
+              </tr>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">Privigen</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">40685</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">475000</td>
+              </tr>
+              <tr class="bg-white">
+                <td class="border border-slate-300 py-1.5 px-3">HyQvia</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">20562</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">232158</td>
+              </tr>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">Panzyga</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">10212</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">158457</td>
+              </tr>
+              <tr class="bg-green-100">
+                <td class="border border-slate-300 py-1.5 px-3">Octagam</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">33009</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">277772</td>
+              </tr>
+              <tr class="bg-green-100">
+                <td class="border border-slate-300 py-1.5 px-3">Xembify</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">20274</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">172996</td>
+              </tr>
+              <tr class="bg-red-100">
+                <td class="border border-slate-300 py-1.5 px-3">gammagard S/D</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">3940</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">59032</td>
+              </tr>
+              <tr class="bg-green-100">
+                <td class="border border-slate-300 py-1.5 px-3">Cutaquig</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">5125</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">34130</td>
+              </tr>
+              <tr class="bg-slate-100 dark:bg-slate-700 font-bold">
+                <td class="border border-slate-300 py-1.5 px-3">Total</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">697192</td>
+                <td class="border border-slate-300 py-1.5 px-3 text-right">8249956</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5 -->
+    <div class="mb-8">
+      <nav class="flex border-b border-slate-300 mb-6 space-x-6 overflow-x-auto">
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Detail</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Clinical
+          Appropriateness</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Payor
+          Restrictions</button>
+        <button class="border-b-2 border-transparent py-3 px-1 text-sm font-medium text-slate-400">Gram
+          Commitment</button>
+        <button class="border-b-2 border-slate-800 py-3 px-1 text-sm font-bold text-slate-800">Margin</button>
+      </nav>
+      <div class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 p-4 space-y-8">
+        <!-- Preferred Drug Table & Dx Code -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div>
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase mb-2 uppercase underline">Preferred
+              Drug Table
+            </h3>
+            <table class="w-full border-collapse border border-slate-300 text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-800">
+                  <th class="border border-slate-300 py-1.5 px-3 text-left">IGDT Category</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-left">Category Preferred Drug</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-600">
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">PreferSCIG3</td>
+                  <td class="border border-slate-300 py-1 px-3">Hyqvia</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">PreferSCIG</td>
+                  <td class="border border-slate-300 py-1 px-3">Cuvitru</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">PreferIVIG4</td>
+                  <td class="border border-slate-300 py-1 px-3">Gammaplex 10%</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">PreferIVIG</td>
+                  <td class="border border-slate-300 py-1 px-3">Gammaked</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">PreferSCIG2</td>
+                  <td class="border border-slate-300 py-1 px-3">Xembify</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div class="lg:pt-6">
+            <div class="flex border border-slate-300 rounded-sm overflow-hidden">
+              <span
+                class="bg-slate-50 px-3 py-2 text-xs font-bold border-r border-slate-300 min-w-[100px] text-slate-700">Dx
+                Code</span>
+              <input class="flex-grow border-none focus:ring-0 text-xs p-2 dark:bg-slate-900" placeholder="User entered"
+                type="text" />
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Financial Assistance & Drug Pricing -->
+        <div class="space-y-6">
+          <div>
+            <div class="flex justify-between items-end mb-2">
+              <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase underline">Financial Assistance
+                Table</h3>
+            </div>
+            <table class="w-full max-w-md border-collapse border border-slate-300 text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-800">
+                  <th class="border border-slate-300 py-1.5 px-3 text-left">Category Preferred Drug</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-right">Max Assistance</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-600">
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">Xembify</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right">50000</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">Hyqvia</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right">50000</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">Gammaked</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right">2500</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase mb-2 underline">Drug Pricing Table
+            </h3>
+            <table class="w-full border-collapse border border-slate-300 text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 text-slate-800">
+                  <th class="border border-slate-300 py-1.5 px-3">Drug Name</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-right">Expected</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-right">Cost</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-right">Profit</th>
+                  <th class="border border-slate-300 py-1.5 px-3 text-right">GM%</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-600">
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">Drug A</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right text-slate-400">Autofilled</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right text-slate-400">Autofilled</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right text-slate-400">Autofilled</td>
+                  <td class="border border-slate-300 py-1 px-3 text-right text-slate-400">Autofilled</td>
+                </tr>
+                <tr>
+                  <td class="border border-slate-300 py-1 px-3">Drug B</td>
+                  <td class="border border-slate-300 py-1 px-3"></td>
+                  <td class="border border-slate-300 py-1 px-3"></td>
+                  <td class="border border-slate-300 py-1 px-3"></td>
+                  <td class="border border-slate-300 py-1 px-3"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Drug Cost & Nursing Cost -->
+        <div>
+          <h3 class="text-sky-600 dark:text-sky-400 text-xs font-bold underline uppercase mb-2">Drug Cost Table</h3>
+          <table class="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-800">
+                <th class="border border-slate-300 py-1.5 px-3 text-left">Grams (monthly dose)</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Expected</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Cost</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Profit</th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr>
+                <td class="border border-slate-300 py-1 px-3">Autofilled / Default Value</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 class="text-sky-600 dark:text-sky-400 text-xs font-bold uppercase underline mb-2">Nursing Cost Table</h3>
+          <table class="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-800">
+                <th class="border border-slate-300 py-1.5 px-3 text-left">Patient State</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-left"></th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">Patient State</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">Autofilled</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">Therapy Type</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">Autofilled</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">Expected Visit Duration</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">User entered / Default value</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">Nurse Home State</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">User entered</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">Travel Time</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">Autofilled</td>
+              </tr>
+              <tr class="bg-red-50">
+                <td class="border border-slate-300 py-1 px-3 font-bold">Estimated Cost to Serve</td>
+                <td class="border border-slate-300 py-1 px-3 text-slate-400 italic">Autofilled</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+        <!-- Final Nursing Table -->
+        <div class="mt-8">
+          <h3 class="text-sky-600 dark:text-sky-400 text-xs font-bold uppercase underline mb-2">Final Nursing Table</h3>
+          <table class="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+              <tr class="bg-slate-50 text-slate-800">
+                <th class="border border-slate-300 py-1.5 px-3 text-left"></th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Expected</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Cost</th>
+                <th class="border border-slate-300 py-1.5 px-3 text-right">Profit</th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-600">
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">99601 Quantity</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+              </tr>
+              <tr>
+                <td class="border border-slate-300 py-1 px-3 font-medium">99602 Hours</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+                <td class="border border-slate-300 py-1 px-3 text-right text-slate-400 italic">Autofilled</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Per diem -->
+        <div class="w-full lg:max-w-2xl">
+          <a class="text-sky-600 dark:text-sky-400 text-xs font-bold underline uppercase block mb-2 cursor-pointer">Per
+            Diem
+            Table</a>
+          <table class="w-full border-collapse border border-slate-400 dark:border-slate-500 text-sm text-center ">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-700/30 font-bold text-slate-800 dark:text-white">
+                <!-- <th class="border border-slate-400 dark:border-slate-500 px-3 py-1"></th> -->
+                <th class="border border-slate-400 dark:border-slate-500 px-3 py-1" colspan="2">Quantity</th>
+                <th class="border border-slate-400 dark:border-slate-500 px-3 py-1">Expected</th>
+                <th class="border border-slate-400 dark:border-slate-500 px-3 py-1">Cost</th>
+                <th class="border border-slate-400 dark:border-slate-500 px-3 py-1">Profit</th>
+              </tr>
+            </thead>
+            <tbody class="text-slate-700 dark:text-slate-300">
+              <tr>
+                <!-- <td class="border border-slate-400 dark:border-slate-500"></td> -->
+                <td class="border border-slate-400 dark:border-slate-500 text-slate-500 dark:text-slate-400"
+                  colspan="2"><input type="text" class="w-full border border-slate-400 dark:border-slate-500 px-3 py-1"
+                    placeholder="User entered"></td>
+                <td class="border border-slate-400 dark:border-slate-500">Autofilled</td>
+                <td class="border border-slate-400 dark:border-slate-500">Autofilled</td>
+                <td class="border border-slate-400 dark:border-slate-500">Autofilled</td>
+              </tr>
+              <tr class="bg-slate-50/50 dark:bg-slate-700/30 font-bold text-slate-800 dark:text-white">
+                <td class="border border-slate-400 dark:border-slate-500 px-4 py-2 text-left" colspan="2">Grand
+                  Total</td>
+                <td class="border border-slate-400 dark:border-slate-500 px-3 py-2">Autofilled</td>
+                <td class="border border-slate-400 dark:border-slate-500 px-3 py-2">Autofilled</td>
+                <td class="border border-slate-400 dark:border-slate-500 px-3 py-2">Autofilled</td>
+              </tr>
+              <tr class="bg-slate-50/50 dark:bg-slate-700/30 font-bold text-slate-800 dark:text-white">
+                <td class="border border-slate-400 dark:border-slate-500 px-4 py-2 text-left" colspan="4">Margin
+                </td>
+                <td class="border border-slate-400 dark:border-slate-500 px-3 py-2">Autofilled</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Provider Profitability & Sign-off -->
+      <div class="pt-8 border-t border-slate-200 dark:border-slate-700">
+        <a class="text-sky-600 dark:text-sky-400 text-xs font-bold underline uppercase block mb-4 cursor-pointer">Provider
+          Profitability (Trailing 6 months) Table</a>
+        <div class="space-y-4 max-w-lg">
+          <div class="flex border border-slate-400 dark:border-slate-500 rounded overflow-hidden">
+            <span
+              class="bg-slate-50 dark:bg-slate-700/50 px-3 py-2 text-sm font-bold border-r border-slate-400 dark:border-slate-500 min-w-[140px] text-slate-800 dark:text-slate-200">Provider
+              NPI</span>
+            <input class="flex-grow border-none focus:ring-0 text-sm  p-2 dark:bg-slate-900 dark:text-white"
+              placeholder="User Entered" type="text" />
+          </div>
+          <div class="flex border border-slate-400 dark:border-slate-500 rounded overflow-hidden">
+            <span
+              class="bg-slate-50 dark:bg-slate-700/50 px-3 py-2 text-sm font-bold border-r border-slate-400 dark:border-slate-500 min-w-[140px] text-slate-800 dark:text-slate-200">Comments</span>
+            <input class="flex-grow border-none focus:ring-0 text-sm  p-2 dark:bg-slate-900 dark:text-white"
+              placeholder="User Entered" type="text" />
+          </div>
+          <div class="flex border border-slate-400 dark:border-slate-500 rounded overflow-hidden">
+            <span
+              class="bg-slate-50 dark:bg-slate-700/50 px-3 py-2 text-sm font-bold border-r border-slate-400 dark:border-slate-500 min-w-[140px] text-slate-800 dark:text-slate-200">Sign-off</span>
+            <input class="flex-grow border-none focus:ring-0 text-sm  p-2 dark:bg-slate-900 dark:text-white"
+              placeholder="User Entered" type="text" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+
+    <footer
+      class="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4 py-6 border-t border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+      <div class="flex gap-4">
+        <button class="text-sm font-medium px-4 py-2 rounded-md">
+          Export Report (PDF)
+        </button>
+        <button
+          class="bg-slate-800 dark:bg-slate-100 dark:text-slate-800 text-white text-sm font-bold px-6 py-2 rounded-md">
+          Run New Analysis
+        </button>
+      </div>
+    </footer>
+  </main>
+
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+.detail-cont {
+  flex-wrap: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .detail-cont {
+    flex-wrap: wrap !important;
+  }
+}

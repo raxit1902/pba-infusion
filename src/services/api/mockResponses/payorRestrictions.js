@@ -1,0 +1,68 @@
+export const payorRestrictionsMockData = {
+  1056974: {
+    Payor_Guide_Details: [
+      {
+        PayerName: "BCBS AL",
+        PayerRegion: "SouthEast Non FL",
+        GuideStatus: "Active",
+        IVIG: ["No Preferred Product", null, null],
+        SCIG: ["No Preferred Product", null, null],
+        AdditionalBVNotes:
+          "Lyme's DX A69.20 is NOT covered under BCBS AL\nTPN\/Enteral a call is required to verify exclusion\/restrictions.  \nACA plans, always obtain paid thru date and determine if eligible for 3-month grace period.  The information may be available online, but if not a call must be made.",
+        IsPBM: "No",
+        IsMandateSP: "No",
+        IsWhiteBaggAllow: "No",
+        IsAISAllow: "Yes",
+        PerDiem: "S Codes",
+        IsNursingValidBillable: "Yes",
+      },
+      {
+        PayerName: "BCBS SC",
+        PayerRegion: "SouthEast Non FL",
+        GuideStatus: "Active",
+        IVIG: ["Octagam", "Gammaplex", "Privigen"],
+        SCIG: ["Hizentra", "HyQvia", "Cuvitru"],
+        AdditionalBVNotes: null,
+        IsPBM: "Yes",
+        IsMandateSP: "No",
+        IsWhiteBaggAllow: "No",
+        IsAISAllow: "Yes",
+        PerDiem: "S Codes",
+        IsNursingValidBillable: "Yes",
+      },
+    ],
+  },
+  1057340: {
+    Payor_Guide_Details: [
+      {
+        PayerName: "Cigna",
+        PayerRegion: null,
+        GuideStatus: "Active",
+        IVIG: ["Gamunex", "Gammaplex", "Octagam"],
+        SCIG: ["Hizentra", "Gamunex", null],
+        AdditionalBVNotes:
+          "Cigna's nonpreferred-brand drugs will have a step therapy requirement.\t\t\t\t\t\nPreferred-brand drugs are Flebogamma, Gamunex-C, Gammaked, Gammaplex, Hizentra, Octagam, and Privigen. \t\t\t\t\t\nAvsola and Inflectra are preferred-brand and Remicade is nonpreferred drug. \t\t\t\t\t\nWhen patient has Medicare part A primary and no part B, BV should check to determine if patient benefits apply\t",
+        IsPBM: "Yes",
+        IsMandateSP: "No",
+        IsWhiteBaggAllow: "No",
+        IsAISAllow: "Yes",
+        PerDiem: "S Codes",
+        IsNursingValidBillable: "Yes",
+      },
+      {
+        PayerName: "United HealthCare (UHC)",
+        PayerRegion: "UHC",
+        GuideStatus: "Active",
+        IVIG: [null, null, null],
+        SCIG: [null, null, null],
+        AdditionalBVNotes: null,
+        IsPBM: "No",
+        IsMandateSP: "No",
+        IsWhiteBaggAllow: "No",
+        IsAISAllow: "No",
+        PerDiem: null,
+        IsNursingValidBillable: "No",
+      },
+    ],
+  },
+};

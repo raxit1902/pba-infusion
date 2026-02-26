@@ -1,0 +1,15 @@
+export const clinical_appropriateness_mock_data = {
+	ig_hypersensitivity: true,
+	iga_deficiency: true,
+	corn_hypersensitivity: true,
+	fructose_intolerance: true,
+	hyaluronidase_hypersensitivity: false,
+	albumin_hypersensitivity: true,
+	hyperprolinemia: false,
+	neonate_3_months: true,
+	age_65_plus: false,
+	diabetes: true,
+	renal_insufficiency: true,
+	cardiac_insufficiency: false,
+	pulmonary_insufficiency: true,
+};
