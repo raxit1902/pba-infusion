@@ -61,7 +61,6 @@ const PayorRestrictions = () => {
 		{ question: 'IS Nursing Valid Billable?', key: 'IsNursingValidBillable' },
 	];
 
-
 	// Filter out null/undefined to check for actual content
 	const ivigDrugs = (currentPayer.IVIG || []).filter((d) => d !== null);
 	const scigDrugs = (currentPayer.SCIG || []).filter((d) => d !== null);
@@ -96,7 +95,7 @@ const PayorRestrictions = () => {
 					console.error('API Error:', error);
 					setError(
 						error.message ||
-						'Failed to fetch patient details. Please try again later.',
+							'Failed to fetch patient details. Please try again later.',
 					);
 				})
 				.finally(() => {
@@ -322,7 +321,7 @@ const PayorRestrictions = () => {
 						xs={12}
 						md={6}
 					>
-						<SectionHeader title='PAYOR GUIDE' />
+						<SectionHeader title='ADDITIONAL INFO' />
 						<TableContainer
 							component={Paper}
 							variant='outlined'

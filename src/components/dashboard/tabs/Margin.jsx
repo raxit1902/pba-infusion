@@ -24,10 +24,10 @@ import usePatientStore from '../../../store/usePatientStore';
 import { api } from '../../../services/api';
 
 const HOURLY_RATES = {
-	'IL': 41.36,
-	'CA': 76.4,
-	'KS': 48.73,
-	'default': 50.0
+	IL: 41.36,
+	CA: 76.4,
+	KS: 48.73,
+	default: 50.0,
 };
 
 const Margin = () => {
@@ -50,29 +50,43 @@ const Margin = () => {
 	const [travelTime, setTravelTime] = useState(1);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	const [providerProfitabilityData, setProviderProfitabilityData] = useState([]);
+	const [providerProfitabilityData, setProviderProfitabilityData] = useState(
+		[],
+	);
 	const [npiSearch, setNpiSearch] = useState('');
 	const [matchedProvider, setMatchedProvider] = useState(null);
 	const [dxCode, setDxCode] = useState('');
 	const [selectedPrefDrugs, setSelectedPrefDrugs] = useState([]);
-	const [selectedContraindications, setSelectedContraindications] = useState([]);
+	const [selectedContraindications, setSelectedContraindications] = useState(
+		[],
+	);
 
 	const selectedMrn = usePatientStore((state) => state.selectedMrn);
-
 
 	// Helper to separate payor cost items into three categories
 	const separatePayorItems = (items) => {
 		const nursingHcpcs = ['99601', '99602'];
-		setFinalNursingItems(items.filter(item => nursingHcpcs.includes(item.hcpc)));
-		setPerDiemItems(items.filter(item => item.cleanDrug?.toLowerCase().startsWith('per diem')));
+		setFinalNursingItems(
+			items.filter((item) => nursingHcpcs.includes(item.hcpc)),
+		);
+		setPerDiemItems(
+			items.filter((item) =>
+				item.cleanDrug?.toLowerCase().startsWith('per diem'),
+			),
+		);
 		const allDrugs = items.filter(
-			item => !nursingHcpcs.includes(item.hcpc) && !item.cleanDrug?.toLowerCase().startsWith('per diem')
+			(item) =>
+				!nursingHcpcs.includes(item.hcpc) &&
+				!item.cleanDrug?.toLowerCase().startsWith('per diem'),
 		);
 		// Deduplicate: keep only the entry with the lowest expectedGram per drug name
 		const drugMap = new Map();
-		allDrugs.forEach(item => {
+		allDrugs.forEach((item) => {
 			const existing = drugMap.get(item.cleanDrug);
-			if (!existing || (item.expectedGram || 0) < (existing.expectedGram || 0)) {
+			if (
+				!existing ||
+				(item.expectedGram || 0) < (existing.expectedGram || 0)
+			) {
 				drugMap.set(item.cleanDrug, item);
 			}
 		});
@@ -90,7 +104,7 @@ const Margin = () => {
 			api.patient.getPayorCostData(selectedMrn),
 			api.patient.getNursingCostData(selectedMrn),
 			api.patient.getProviderProfitability(selectedMrn),
-			api.patient.getFinancialAssistanceData(selectedMrn)
+			api.patient.getFinancialAssistanceData(selectedMrn),
 		])
 			.then(([data, payorData, nursingData, providerData, faData]) => {
 				setMarginData(data);
@@ -99,10 +113,15 @@ const Margin = () => {
 				setProviderProfitabilityData(providerData || []);
 				setFinancialAssistanceData(faData);
 
-				if (payorData && payorData.uniquePayors && payorData.uniquePayors.length > 0) {
+				if (
+					payorData &&
+					payorData.uniquePayors &&
+					payorData.uniquePayors.length > 0
+				) {
 					const firstPayor = payorData.uniquePayors[0];
 					setSelectedPayor(firstPayor);
-					const items = payorData.payors?.find(p => p.name === firstPayor)?.items || [];
+					const items =
+						payorData.payors?.find((p) => p.name === firstPayor)?.items || [];
 					separatePayorItems(items);
 				}
 
@@ -159,14 +178,20 @@ const Margin = () => {
 	const formatValue = (val) => {
 		if (val === null || val === undefined || val === '') return 'Autofilled';
 		if (typeof val === 'number') {
-			return val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			return val.toLocaleString(undefined, {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			});
 		}
 		return val.toLocaleString();
 	};
 
-	const currentPayorItems = payorCostData?.payors?.find(p => p.name === selectedPayor)?.items || [];
+	const currentPayorItems =
+		payorCostData?.payors?.find((p) => p.name === selectedPayor)?.items || [];
 
-	const currentNursingDetails = nursingCostData.find(n => n.nurse_home_state === selectedNurseState) || nursingCostData[0];
+	const currentNursingDetails =
+		nursingCostData.find((n) => n.nurse_home_state === selectedNurseState) ||
+		nursingCostData[0];
 
 	const calculateEstimatedCost = () => {
 		if (!selectedNurseState) return 0;
@@ -255,7 +280,6 @@ const Margin = () => {
 				</TableContainer>
 			</Paper>
 
-
 			{/* Financial Assistance Table */}
 			<Paper
 				variant='outlined'
@@ -284,10 +308,24 @@ const Margin = () => {
 					Financial Assistance Table
 				</Typography>
 
-				<Grid container spacing={2} sx={{ mb: 3 }}>
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth size='small'>
-							<Typography variant="caption" sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}>
+				<Grid
+					container
+					spacing={2}
+					sx={{ mb: 3 }}
+				>
+					<Grid
+						item
+						xs={12}
+						sm={4}
+					>
+						<FormControl
+							fullWidth
+							size='small'
+						>
+							<Typography
+								variant='caption'
+								sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}
+							>
 								Dx Code
 							</Typography>
 							<TextField
@@ -298,54 +336,118 @@ const Margin = () => {
 								onChange={(e) => setDxCode(e.target.value)}
 								placeholder='Enter Dx Code'
 								sx={{
-									'& .MuiOutlinedInput-root': { fontSize: '0.8rem' }
+									'& .MuiOutlinedInput-root': { fontSize: '0.8rem' },
 								}}
 							/>
 						</FormControl>
 					</Grid>
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth size='small'>
-							<Typography variant="caption" sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}>
+					<Grid
+						item
+						xs={12}
+						sm={4}
+					>
+						<FormControl
+							fullWidth
+							size='small'
+						>
+							<Typography
+								variant='caption'
+								sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}
+							>
 								Category Preferred Drug
 							</Typography>
 							<Select
 								multiple
 								value={selectedPrefDrugs}
 								onChange={(e) => setSelectedPrefDrugs(e.target.value)}
-								input={<OutlinedInput size="small" />}
-								renderValue={(selected) => selected.length === 0 ? 'All Drugs' : `${selected.length} selected`}
+								input={<OutlinedInput size='small' />}
+								renderValue={(selected) =>
+									selected.length === 0
+										? 'All Drugs'
+										: `${selected.length} selected`
+								}
 								displayEmpty
 								sx={{ fontSize: '0.8rem' }}
 							>
-								{Array.from(new Set((financialAssistanceData?.drug_list || []).map(d => d.CategoryPreferredDrug))).sort().map((name) => (
-									<MenuItem key={name} value={name} sx={{ fontSize: '0.8rem' }}>
-										<Checkbox checked={selectedPrefDrugs.indexOf(name) > -1} size="small" />
-										<ListItemText primary={name} primaryTypographyProps={{ fontSize: '0.8rem' }} />
-									</MenuItem>
-								))}
+								{Array.from(
+									new Set(
+										(financialAssistanceData?.drug_list || []).map(
+											(d) => d.CategoryPreferredDrug,
+										),
+									),
+								)
+									.sort()
+									.map((name) => (
+										<MenuItem
+											key={name}
+											value={name}
+											sx={{ fontSize: '0.8rem' }}
+										>
+											<Checkbox
+												checked={selectedPrefDrugs.indexOf(name) > -1}
+												size='small'
+											/>
+											<ListItemText
+												primary={name}
+												primaryTypographyProps={{ fontSize: '0.8rem' }}
+											/>
+										</MenuItem>
+									))}
 							</Select>
 						</FormControl>
 					</Grid>
-					<Grid item xs={12} sm={4}>
-						<FormControl fullWidth size='small'>
-							<Typography variant="caption" sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}>
+					<Grid
+						item
+						xs={12}
+						sm={4}
+					>
+						<FormControl
+							fullWidth
+							size='small'
+						>
+							<Typography
+								variant='caption'
+								sx={{ mb: 0.5, fontWeight: 600, color: '#64748b' }}
+							>
 								Clinical Contraindication
 							</Typography>
 							<Select
 								multiple
 								value={selectedContraindications}
 								onChange={(e) => setSelectedContraindications(e.target.value)}
-								input={<OutlinedInput size="small" />}
-								renderValue={(selected) => selected.length === 0 ? 'All Contraindications' : `${selected.length} selected`}
+								input={<OutlinedInput size='small' />}
+								renderValue={(selected) =>
+									selected.length === 0
+										? 'All Contraindications'
+										: `${selected.length} selected`
+								}
 								displayEmpty
 								sx={{ fontSize: '0.8rem' }}
 							>
-								{Array.from(new Set((financialAssistanceData?.drug_list || []).map(d => d.ClincalContraindication))).sort().map((name) => (
-									<MenuItem key={name} value={name} sx={{ fontSize: '0.8rem' }}>
-										<Checkbox checked={selectedContraindications.indexOf(name) > -1} size="small" />
-										<ListItemText primary={name} primaryTypographyProps={{ fontSize: '0.8rem' }} />
-									</MenuItem>
-								))}
+								{Array.from(
+									new Set(
+										(financialAssistanceData?.drug_list || []).map(
+											(d) => d.ClincalContraindication,
+										),
+									),
+								)
+									.sort()
+									.map((name) => (
+										<MenuItem
+											key={name}
+											value={name}
+											sx={{ fontSize: '0.8rem' }}
+										>
+											<Checkbox
+												checked={selectedContraindications.indexOf(name) > -1}
+												size='small'
+											/>
+											<ListItemText
+												primary={name}
+												primaryTypographyProps={{ fontSize: '0.8rem' }}
+											/>
+										</MenuItem>
+									))}
 							</Select>
 						</FormControl>
 					</Grid>
@@ -389,42 +491,75 @@ const Margin = () => {
 						<TableBody>
 							{!dxCode ? (
 								<TableRow>
-									<TableCell colSpan={2} sx={{ color: '#94a3b8', borderColor: '#bfdbfe', py: 4, textAlign: 'center', fontStyle: 'italic' }}>
+									<TableCell
+										colSpan={2}
+										sx={{
+											color: '#94a3b8',
+											borderColor: '#bfdbfe',
+											py: 4,
+											textAlign: 'center',
+											fontStyle: 'italic',
+										}}
+									>
 										Please enter a DX code to see financial assistance programs
 									</TableCell>
 								</TableRow>
 							) : (
 								(() => {
-									const filtered = (financialAssistanceData?.drug_list || []).filter(item => {
+									const filtered = (
+										financialAssistanceData?.drug_list || []
+									).filter((item) => {
 										const matchDx = item.DXCode === dxCode;
-										const matchDrug = selectedPrefDrugs.length === 0 || selectedPrefDrugs.includes(item.CategoryPreferredDrug);
-										const matchContra = selectedContraindications.length === 0 || selectedContraindications.includes(item.ClincalContraindication);
+										const matchDrug =
+											selectedPrefDrugs.length === 0 ||
+											selectedPrefDrugs.includes(item.CategoryPreferredDrug);
+										const matchContra =
+											selectedContraindications.length === 0 ||
+											selectedContraindications.includes(
+												item.ClincalContraindication,
+											);
 										return matchDx && matchDrug && matchContra;
 									});
 									if (filtered.length === 0) {
 										const activeFilters = [];
-										if (selectedPrefDrugs.length > 0) activeFilters.push('Drugs');
-										if (selectedContraindications.length > 0) activeFilters.push('Contraindications');
+										if (selectedPrefDrugs.length > 0)
+											activeFilters.push('Drugs');
+										if (selectedContraindications.length > 0)
+											activeFilters.push('Contraindications');
 
 										return (
 											<TableRow>
-												<TableCell colSpan={2} sx={{ color: '#ef4444', borderColor: '#bfdbfe', py: 4, textAlign: 'center' }}>
-													No matching data found for DX code: <strong>{dxCode}</strong>
-													{activeFilters.length > 0 && ` and selected ${activeFilters.join(' & ')}`}
+												<TableCell
+													colSpan={2}
+													sx={{
+														color: '#ef4444',
+														borderColor: '#bfdbfe',
+														py: 4,
+														textAlign: 'center',
+													}}
+												>
+													No matching data found for DX code:{' '}
+													<strong>{dxCode}</strong>
+													{activeFilters.length > 0 &&
+														` and selected ${activeFilters.join(' & ')}`}
 												</TableCell>
 											</TableRow>
 										);
 									}
 									return filtered.map((row, index) => (
 										<TableRow key={index}>
-											<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
+											<TableCell
+												sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+											>
 												{row.faDrug}
 											</TableCell>
 											<TableCell
 												align='right'
 												sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
 											>
-												{row.MaxAssistance ? parseFloat(row.MaxAssistance).toLocaleString() : '0'}
+												{row.MaxAssistance
+													? parseFloat(row.MaxAssistance).toLocaleString()
+													: '0'}
 											</TableCell>
 										</TableRow>
 									));
@@ -434,7 +569,6 @@ const Margin = () => {
 					</Table>
 				</TableContainer>
 			</Paper>
-
 
 			{/* Drug Pricing Table */}
 			<Paper
@@ -447,7 +581,14 @@ const Margin = () => {
 					mb: 4,
 				}}
 			>
-				<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						mb: 2,
+					}}
+				>
 					<Typography
 						variant='subtitle2'
 						sx={{
@@ -465,23 +606,32 @@ const Margin = () => {
 					</Typography>
 
 					{payorCostData?.uniquePayors && (
-						<FormControl size='small' sx={{ minWidth: 200 }}>
+						<FormControl
+							size='small'
+							sx={{ minWidth: 200 }}
+						>
 							<Select
 								value={selectedPayor}
 								onChange={(e) => {
 									const newPayor = e.target.value;
 									setSelectedPayor(newPayor);
-									const items = payorCostData?.payors?.find(p => p.name === newPayor)?.items || [];
+									const items =
+										payorCostData?.payors?.find((p) => p.name === newPayor)
+											?.items || [];
 									separatePayorItems(items);
 								}}
 								sx={{
 									fontSize: '0.75rem',
 									height: '32px',
-									'& .MuiSelect-select': { py: 0.5 }
+									'& .MuiSelect-select': { py: 0.5 },
 								}}
 							>
 								{payorCostData.uniquePayors.map((payor) => (
-									<MenuItem key={payor} value={payor} sx={{ fontSize: '0.75rem' }}>
+									<MenuItem
+										key={payor}
+										value={payor}
+										sx={{ fontSize: '0.75rem' }}
+									>
 										{payor}
 									</MenuItem>
 								))}
@@ -498,10 +648,49 @@ const Margin = () => {
 					<Table size='small'>
 						<TableHead>
 							<TableRow sx={{ backgroundColor: '#fff' }}>
-								<TableCell sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Drug Name</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Expected Gram</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Cost Gram</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Profit</TableCell>
+								<TableCell
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Drug Name
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Expected Gram
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Cost Gram
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Profit
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -510,20 +699,35 @@ const Margin = () => {
 									<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
 										{item.cleanDrug}
 									</TableCell>
-									<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>
+									<TableCell
+										align='right'
+										sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+									>
 										{formatValue(item.expectedGram)}
 									</TableCell>
-									<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>
+									<TableCell
+										align='right'
+										sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+									>
 										{formatValue(item.costGram)}
 									</TableCell>
-									<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>
-										{formatValue((item.expectedGram || 0) - (item.costGram || 0))}
+									<TableCell
+										align='right'
+										sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+									>
+										{formatValue(
+											(item.expectedGram || 0) - (item.costGram || 0),
+										)}
 									</TableCell>
 								</TableRow>
 							))}
 							{currentPayorItems.length === 0 && (
 								<TableRow>
-									<TableCell colSpan={4} align='center' sx={{ py: 3, color: '#94a3b8' }}>
+									<TableCell
+										colSpan={4}
+										align='center'
+										sx={{ py: 3, color: '#94a3b8' }}
+									>
 										No items found for selected payor.
 									</TableCell>
 								</TableRow>
@@ -544,7 +748,14 @@ const Margin = () => {
 					mb: 4,
 				}}
 			>
-				<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						mb: 2,
+					}}
+				>
 					<Typography
 						variant='subtitle2'
 						sx={{
@@ -561,7 +772,10 @@ const Margin = () => {
 						Drug Cost Table
 					</Typography>
 
-					<FormControl size='small' sx={{ minWidth: 250 }}>
+					<FormControl
+						size='small'
+						sx={{ minWidth: 250 }}
+					>
 						<Select
 							multiple
 							value={selectedDrugs}
@@ -576,13 +790,23 @@ const Margin = () => {
 							sx={{
 								fontSize: '0.75rem',
 								minHeight: '32px',
-								'& .MuiSelect-select': { py: 0.5 }
+								'& .MuiSelect-select': { py: 0.5 },
 							}}
 						>
 							{drugPricingItems.map((item, idx) => (
-								<MenuItem key={idx} value={item.cleanDrug} sx={{ fontSize: '0.75rem', py: 0.5 }}>
-									<Checkbox checked={selectedDrugs.indexOf(item.cleanDrug) > -1} size='small' />
-									<ListItemText primary={item.cleanDrug} primaryTypographyProps={{ fontSize: '0.75rem' }} />
+								<MenuItem
+									key={idx}
+									value={item.cleanDrug}
+									sx={{ fontSize: '0.75rem', py: 0.5 }}
+								>
+									<Checkbox
+										checked={selectedDrugs.indexOf(item.cleanDrug) > -1}
+										size='small'
+									/>
+									<ListItemText
+										primary={item.cleanDrug}
+										primaryTypographyProps={{ fontSize: '0.75rem' }}
+									/>
 								</MenuItem>
 							))}
 						</Select>
@@ -597,16 +821,65 @@ const Margin = () => {
 					<Table size='small'>
 						<TableHead>
 							<TableRow sx={{ backgroundColor: '#fff' }}>
-								<TableCell sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Drug Name</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Quantity</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Expected</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Cost</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Profit</TableCell>
+								<TableCell
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Drug Name
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Quantity
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Expected
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Cost
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Profit
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{drugPricingItems
-								.filter(item => selectedDrugs.includes(item.cleanDrug))
+								.filter((item) => selectedDrugs.includes(item.cleanDrug))
 								.map((item, index) => {
 									const qty = drugQuantities[item.cleanDrug + '_' + index] ?? 1;
 									const expected = ((item.expectedGram || 0) * qty).toFixed(2);
@@ -614,8 +887,19 @@ const Margin = () => {
 									const profit = (expected - cost).toFixed(2);
 									return (
 										<TableRow key={index}>
-											<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>{item.cleanDrug}</TableCell>
-											<TableCell align='right' sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+											<TableCell
+												sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+											>
+												{item.cleanDrug}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													color: '#64748b',
+													borderColor: '#bfdbfe',
+													py: 0.5,
+												}}
+											>
 												<TextField
 													type='number'
 													variant='outlined'
@@ -623,9 +907,10 @@ const Margin = () => {
 													value={qty}
 													onChange={(e) => {
 														const val = parseFloat(e.target.value);
-														setDrugQuantities(prev => ({
+														setDrugQuantities((prev) => ({
 															...prev,
-															[item.cleanDrug + '_' + index]: val < 0 ? 0 : e.target.value
+															[item.cleanDrug + '_' + index]:
+																val < 0 ? 0 : e.target.value,
 														}));
 													}}
 													InputProps={{
@@ -635,22 +920,110 @@ const Margin = () => {
 															height: '32px',
 															backgroundColor: '#f8fafc',
 															'& fieldset': { borderColor: '#bfdbfe' },
-															'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+															'&:hover fieldset': {
+																borderColor: '#3b82f6 !important',
+															},
 														},
-														inputProps: { min: 0, step: 1 }
+														inputProps: { min: 0, step: 1 },
 													}}
 													sx={{ width: '80px', ml: 'auto' }}
 												/>
 											</TableCell>
-											<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{expected}</TableCell>
-											<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{cost}</TableCell>
-											<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{profit}</TableCell>
+											<TableCell
+												align='right'
+												sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+											>
+												{expected}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+											>
+												{cost}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+											>
+												{profit}
+											</TableCell>
 										</TableRow>
 									);
 								})}
+							{selectedDrugs.length > 0 &&
+								(() => {
+									const filteredDrugItems = drugPricingItems.filter((item) =>
+										selectedDrugs.includes(item.cleanDrug),
+									);
+									const drugTotalExpected = filteredDrugItems.reduce(
+										(sum, item, index) =>
+											sum +
+											(item.expectedGram || 0) *
+												(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+										0,
+									);
+									const drugTotalCost = filteredDrugItems.reduce(
+										(sum, item, index) =>
+											sum +
+											(item.costGram || 0) *
+												(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+										0,
+									);
+									const drugTotalProfit = (
+										drugTotalExpected - drugTotalCost
+									).toFixed(2);
+									return (
+										<TableRow sx={{ backgroundColor: '#f8fafc' }}>
+											<TableCell
+												sx={{
+													fontWeight: 700,
+													color: 'var(--color-text-main)',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												Total
+											</TableCell>
+											<TableCell sx={{ borderColor: '#bfdbfe' }}></TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{drugTotalExpected.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{drugTotalCost.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{drugTotalProfit}
+											</TableCell>
+										</TableRow>
+									);
+								})()}
 							{selectedDrugs.length === 0 && (
 								<TableRow>
-									<TableCell colSpan={5} align='center' sx={{ py: 3, color: '#94a3b8' }}>
+									<TableCell
+										colSpan={5}
+										align='center'
+										sx={{ py: 3, color: '#94a3b8' }}
+									>
 										Select drugs from the dropdown to view cost data.
 									</TableCell>
 								</TableRow>
@@ -696,16 +1069,34 @@ const Margin = () => {
 					<Table size='small'>
 						<TableBody>
 							<TableRow>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe', width: '40%' }}>Patient State</TableCell>
-								<TableCell sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{formatValue(currentNursingDetails?.patient_state)}</TableCell>
+								<TableCell
+									sx={{
+										color: '#64748b',
+										borderColor: '#bfdbfe',
+										width: '40%',
+									}}
+								>
+									Patient State
+								</TableCell>
+								<TableCell sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>
+									{formatValue(currentNursingDetails?.patient_state)}
+								</TableCell>
 							</TableRow>
 							<TableRow>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>Therapy Type</TableCell>
-								<TableCell sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{formatValue(currentNursingDetails?.therapy_type)}</TableCell>
+								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
+									Therapy Type
+								</TableCell>
+								<TableCell sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>
+									{formatValue(currentNursingDetails?.therapy_type)}
+								</TableCell>
 							</TableRow>
 							<TableRow>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>Expected Visit Duration</TableCell>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
+									Expected Visit Duration
+								</TableCell>
+								<TableCell
+									sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+								>
 									<TextField
 										type='number'
 										variant='outlined'
@@ -722,23 +1113,35 @@ const Margin = () => {
 												height: '32px',
 												backgroundColor: '#f8fafc',
 												'& fieldset': { borderColor: '#bfdbfe' },
-												'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+												'&:hover fieldset': {
+													borderColor: '#3b82f6 !important',
+												},
 											},
-											inputProps: { min: 1 }
+											inputProps: { min: 1 },
 										}}
 										sx={{ width: '80px' }}
 									/>
 								</TableCell>
 							</TableRow>
 							<TableRow>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>Nurse Home State</TableCell>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
-									<FormControl variant='outlined' size='small' sx={{ minWidth: '80px' }}>
+								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
+									Nurse Home State
+								</TableCell>
+								<TableCell
+									sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+								>
+									<FormControl
+										variant='outlined'
+										size='small'
+										sx={{ minWidth: '80px' }}
+									>
 										<Select
 											value={selectedNurseState}
 											onChange={(e) => {
 												setSelectedNurseState(e.target.value);
-												const match = nursingCostData.find(n => n.nurse_home_state === e.target.value);
+												const match = nursingCostData.find(
+													(n) => n.nurse_home_state === e.target.value,
+												);
 												setTravelTime(match?.travel_time ?? 1.0);
 											}}
 											sx={{
@@ -746,12 +1149,20 @@ const Margin = () => {
 												color: '#64748b',
 												height: '32px',
 												backgroundColor: '#f8fafc',
-												'& .MuiOutlinedInput-notchedOutline': { borderColor: '#bfdbfe' },
-												'&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#3b82f6 !important' },
+												'& .MuiOutlinedInput-notchedOutline': {
+													borderColor: '#bfdbfe',
+												},
+												'&:hover .MuiOutlinedInput-notchedOutline': {
+													borderColor: '#3b82f6 !important',
+												},
 											}}
 										>
 											{nursingCostData.map((item, idx) => (
-												<MenuItem key={idx} value={item.nurse_home_state} sx={{ fontSize: '0.875rem' }}>
+												<MenuItem
+													key={idx}
+													value={item.nurse_home_state}
+													sx={{ fontSize: '0.875rem' }}
+												>
 													{item.nurse_home_state}
 												</MenuItem>
 											))}
@@ -760,8 +1171,12 @@ const Margin = () => {
 								</TableCell>
 							</TableRow>
 							<TableRow>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>Travel Time</TableCell>
-								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+								<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>
+									Travel Time
+								</TableCell>
+								<TableCell
+									sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+								>
 									<TextField
 										type='number'
 										variant='outlined'
@@ -778,17 +1193,35 @@ const Margin = () => {
 												height: '32px',
 												backgroundColor: '#f8fafc',
 												'& fieldset': { borderColor: '#bfdbfe' },
-												'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+												'&:hover fieldset': {
+													borderColor: '#3b82f6 !important',
+												},
 											},
-											inputProps: { min: 0, step: 0.1 }
+											inputProps: { min: 0, step: 0.1 },
 										}}
 										sx={{ width: '80px' }}
 									/>
 								</TableCell>
 							</TableRow>
 							<TableRow sx={{ backgroundColor: '#f2f6feff' }}>
-								<TableCell sx={{ fontWeight: 700, color: 'var(--color-primary)', borderColor: '#bfdbfe' }}>Estimated Cost to Serve</TableCell>
-								<TableCell sx={{ fontWeight: 700, color: 'var(--color-primary)', borderColor: '#bfdbfe' }}>{formatValue(estimatedCost)}</TableCell>
+								<TableCell
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-primary)',
+										borderColor: '#bfdbfe',
+									}}
+								>
+									Estimated Cost to Serve
+								</TableCell>
+								<TableCell
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-primary)',
+										borderColor: '#bfdbfe',
+									}}
+								>
+									{formatValue(estimatedCost)}
+								</TableCell>
 							</TableRow>
 						</TableBody>
 					</Table>
@@ -831,26 +1264,87 @@ const Margin = () => {
 					<Table size='small'>
 						<TableHead>
 							<TableRow sx={{ backgroundColor: '#fff' }}>
-								<TableCell sx={{ borderColor: '#bfdbfe', width: '25%' }}></TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Quantity</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Enter Cost</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Expected</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Cost</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Profit</TableCell>
+								<TableCell
+									sx={{ borderColor: '#bfdbfe', width: '25%' }}
+								></TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Quantity
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Enter Cost
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Expected
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Cost
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Profit
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{finalNursingItems.map((item, index) => {
-								const label = item.hcpc === '99601' ? '99601 Quantity' : '99602 Hours';
+								const label =
+									item.hcpc === '99601' ? '99601 Quantity' : '99602 Hours';
 								const qty = nursingQuantities[item.hcpc] ?? 1;
-								const enteredCost = nursingCostInputs[item.hcpc] ?? item.costGram ?? 0;
+								const enteredCost =
+									nursingCostInputs[item.hcpc] ?? item.costGram ?? 0;
 								const expected = ((item.expectedGram || 0) * qty).toFixed(2);
 								const cost = (parseFloat(enteredCost) * qty).toFixed(2);
 								const profit = (expected - cost).toFixed(2);
 								return (
 									<TableRow key={index}>
-										<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>{label}</TableCell>
-										<TableCell align='right' sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											{label}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+										>
 											<TextField
 												type='number'
 												variant='outlined'
@@ -858,9 +1352,9 @@ const Margin = () => {
 												value={qty}
 												onChange={(e) => {
 													const val = parseFloat(e.target.value);
-													setNursingQuantities(prev => ({
+													setNursingQuantities((prev) => ({
 														...prev,
-														[item.hcpc]: val < 0 ? 0 : e.target.value
+														[item.hcpc]: val < 0 ? 0 : e.target.value,
 													}));
 												}}
 												InputProps={{
@@ -870,14 +1364,19 @@ const Margin = () => {
 														height: '32px',
 														backgroundColor: '#f8fafc',
 														'& fieldset': { borderColor: '#bfdbfe' },
-														'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+														'&:hover fieldset': {
+															borderColor: '#3b82f6 !important',
+														},
 													},
-													inputProps: { min: 0, step: 1 }
+													inputProps: { min: 0, step: 1 },
 												}}
 												sx={{ width: '80px', ml: 'auto' }}
 											/>
 										</TableCell>
-										<TableCell align='right' sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+										<TableCell
+											align='right'
+											sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+										>
 											<TextField
 												type='number'
 												variant='outlined'
@@ -885,9 +1384,9 @@ const Margin = () => {
 												value={enteredCost}
 												onChange={(e) => {
 													const val = parseFloat(e.target.value);
-													setNursingCostInputs(prev => ({
+													setNursingCostInputs((prev) => ({
 														...prev,
-														[item.hcpc]: val < 0 ? 0 : e.target.value
+														[item.hcpc]: val < 0 ? 0 : e.target.value,
 													}));
 												}}
 												InputProps={{
@@ -897,19 +1396,105 @@ const Margin = () => {
 														height: '32px',
 														backgroundColor: '#f8fafc',
 														'& fieldset': { borderColor: '#bfdbfe' },
-														'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+														'&:hover fieldset': {
+															borderColor: '#3b82f6 !important',
+														},
 													},
-													inputProps: { min: 0, step: 0.01 }
+													inputProps: { min: 0, step: 0.01 },
 												}}
 												sx={{ width: '80px', ml: 'auto' }}
 											/>
 										</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{expected}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{cost}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{profit}</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{expected}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{cost}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{profit}
+										</TableCell>
 									</TableRow>
 								);
 							})}
+							{finalNursingItems.length > 0 &&
+								(() => {
+									const nursingTotalExpected = finalNursingItems.reduce(
+										(sum, item) =>
+											sum +
+											(item.expectedGram || 0) *
+												(nursingQuantities[item.hcpc] ?? 1),
+										0,
+									);
+									const nursingTotalCost = finalNursingItems.reduce(
+										(sum, item) =>
+											sum +
+											parseFloat(
+												nursingCostInputs[item.hcpc] ?? item.costGram ?? 0,
+											) *
+												(nursingQuantities[item.hcpc] ?? 1),
+										0,
+									);
+									const nursingTotalProfit = (
+										nursingTotalExpected - nursingTotalCost
+									).toFixed(2);
+									return (
+										<TableRow sx={{ backgroundColor: '#f8fafc' }}>
+											<TableCell
+												sx={{
+													fontWeight: 700,
+													color: 'var(--color-text-main)',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												Total
+											</TableCell>
+											<TableCell
+												colSpan={2}
+												sx={{ borderColor: '#bfdbfe' }}
+											></TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{nursingTotalExpected.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{nursingTotalCost.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{nursingTotalProfit}
+											</TableCell>
+										</TableRow>
+									);
+								})()}
 						</TableBody>
 					</Table>
 				</TableContainer>
@@ -951,25 +1536,85 @@ const Margin = () => {
 					<Table size='small'>
 						<TableHead>
 							<TableRow sx={{ backgroundColor: '#fff' }}>
-								<TableCell sx={{ borderColor: '#bfdbfe', width: '25%' }}></TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Quantity</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Enter Cost</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Expected</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Cost</TableCell>
-								<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Profit</TableCell>
+								<TableCell
+									sx={{ borderColor: '#bfdbfe', width: '25%' }}
+								></TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Quantity
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Enter Cost
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Expected
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Cost
+								</TableCell>
+								<TableCell
+									align='right'
+									sx={{
+										fontWeight: 700,
+										color: 'var(--color-text-main)',
+										borderColor: '#bfdbfe',
+										fontSize: '0.8rem',
+									}}
+								>
+									Profit
+								</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{perDiemItems.map((item, index) => {
 								const qty = perDiemQuantities[index] ?? 1;
-								const enteredCost = perDiemCostInputs[index] ?? item.costGram ?? 0;
+								const enteredCost =
+									perDiemCostInputs[index] ?? item.costGram ?? 0;
 								const expected = ((item.expectedGram || 0) * qty).toFixed(2);
 								const cost = (parseFloat(enteredCost) * qty).toFixed(2);
 								const profit = (expected - cost).toFixed(2);
 								return (
 									<TableRow key={index}>
-										<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>{item.cleanDrug}</TableCell>
-										<TableCell align='right' sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											{item.cleanDrug}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+										>
 											<TextField
 												type='number'
 												variant='outlined'
@@ -977,9 +1622,9 @@ const Margin = () => {
 												value={qty}
 												onChange={(e) => {
 													const val = parseFloat(e.target.value);
-													setPerDiemQuantities(prev => ({
+													setPerDiemQuantities((prev) => ({
 														...prev,
-														[index]: val < 0 ? 0 : e.target.value
+														[index]: val < 0 ? 0 : e.target.value,
 													}));
 												}}
 												InputProps={{
@@ -989,14 +1634,19 @@ const Margin = () => {
 														height: '32px',
 														backgroundColor: '#f8fafc',
 														'& fieldset': { borderColor: '#bfdbfe' },
-														'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+														'&:hover fieldset': {
+															borderColor: '#3b82f6 !important',
+														},
 													},
-													inputProps: { min: 0, step: 1 }
+													inputProps: { min: 0, step: 1 },
 												}}
 												sx={{ width: '80px', ml: 'auto' }}
 											/>
 										</TableCell>
-										<TableCell align='right' sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}>
+										<TableCell
+											align='right'
+											sx={{ color: '#64748b', borderColor: '#bfdbfe', py: 0.5 }}
+										>
 											<TextField
 												type='number'
 												variant='outlined'
@@ -1004,9 +1654,9 @@ const Margin = () => {
 												value={enteredCost}
 												onChange={(e) => {
 													const val = parseFloat(e.target.value);
-													setPerDiemCostInputs(prev => ({
+													setPerDiemCostInputs((prev) => ({
 														...prev,
-														[index]: val < 0 ? 0 : e.target.value
+														[index]: val < 0 ? 0 : e.target.value,
 													}));
 												}}
 												InputProps={{
@@ -1016,45 +1666,395 @@ const Margin = () => {
 														height: '32px',
 														backgroundColor: '#f8fafc',
 														'& fieldset': { borderColor: '#bfdbfe' },
-														'&:hover fieldset': { borderColor: '#3b82f6 !important' },
+														'&:hover fieldset': {
+															borderColor: '#3b82f6 !important',
+														},
 													},
-													inputProps: { min: 0, step: 0.01 }
+													inputProps: { min: 0, step: 0.01 },
 												}}
 												sx={{ width: '80px', ml: 'auto' }}
 											/>
 										</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{expected}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{cost}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{profit}</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{expected}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{cost}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{profit}
+										</TableCell>
 									</TableRow>
 								);
 							})}
-							{perDiemItems.length > 0 && (() => {
-								const totalExpected = perDiemItems.reduce((sum, item, i) => sum + ((item.expectedGram || 0) * (perDiemQuantities[i] ?? 1)), 0);
-								const totalCost = perDiemItems.reduce((sum, item, i) => sum + (parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) * (perDiemQuantities[i] ?? 1)), 0);
-								const totalProfit = (totalExpected - totalCost).toFixed(2);
-								const margin = totalExpected > 0 ? ((totalExpected - totalCost) / totalExpected * 100).toFixed(2) : '0.00';
-								return (
-									<>
+							{perDiemItems.length > 0 &&
+								(() => {
+									const perDiemTotalExpected = perDiemItems.reduce(
+										(sum, item, i) =>
+											sum +
+											(item.expectedGram || 0) * (perDiemQuantities[i] ?? 1),
+										0,
+									);
+									const perDiemTotalCost = perDiemItems.reduce(
+										(sum, item, i) =>
+											sum +
+											parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) *
+												(perDiemQuantities[i] ?? 1),
+										0,
+									);
+									const perDiemTotalProfit = (
+										perDiemTotalExpected - perDiemTotalCost
+									).toFixed(2);
+									return (
 										<TableRow sx={{ backgroundColor: '#f8fafc' }}>
-											<TableCell sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe' }}>Grand Total</TableCell>
-											<TableCell colSpan={2} sx={{ borderColor: '#bfdbfe' }}></TableCell>
-											<TableCell align='right' sx={{ fontWeight: 700, color: '#94a3b8', borderColor: '#bfdbfe' }}>{totalExpected.toFixed(2)}</TableCell>
-											<TableCell align='right' sx={{ fontWeight: 700, color: '#94a3b8', borderColor: '#bfdbfe' }}>{totalCost.toFixed(2)}</TableCell>
-											<TableCell align='right' sx={{ fontWeight: 700, color: '#94a3b8', borderColor: '#bfdbfe' }}>{totalProfit}</TableCell>
+											<TableCell
+												sx={{
+													fontWeight: 700,
+													color: 'var(--color-text-main)',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												Total
+											</TableCell>
+											<TableCell
+												colSpan={2}
+												sx={{ borderColor: '#bfdbfe' }}
+											></TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{perDiemTotalExpected.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{perDiemTotalCost.toFixed(2)}
+											</TableCell>
+											<TableCell
+												align='right'
+												sx={{
+													fontWeight: 700,
+													color: '#94a3b8',
+													borderColor: '#bfdbfe',
+												}}
+											>
+												{perDiemTotalProfit}
+											</TableCell>
 										</TableRow>
-										<TableRow sx={{ backgroundColor: '#f1f5f9' }}>
-											<TableCell sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe' }}>Margin</TableCell>
-											<TableCell colSpan={4} sx={{ borderColor: '#bfdbfe' }}></TableCell>
-											<TableCell align='right' sx={{ fontWeight: 700, color: '#94a3b8', borderColor: '#bfdbfe' }}>{margin}</TableCell>
-										</TableRow>
-									</>
-								);
-							})()}
+									);
+								})()}
 						</TableBody>
 					</Table>
 				</TableContainer>
 			</Paper>
+
+			{/* Grand Total Summary Card */}
+			{(() => {
+				// Drug Cost totals
+				const filteredDrugItems = drugPricingItems.filter((item) =>
+					selectedDrugs.includes(item.cleanDrug),
+				);
+				const drugTotalExpected = filteredDrugItems.reduce(
+					(sum, item, index) =>
+						sum +
+						(item.expectedGram || 0) *
+							(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+					0,
+				);
+				const drugTotalCost = filteredDrugItems.reduce(
+					(sum, item, index) =>
+						sum +
+						(item.costGram || 0) *
+							(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+					0,
+				);
+				// Final Nursing totals
+				const nursingTotalExpected = finalNursingItems.reduce(
+					(sum, item) =>
+						sum +
+						(item.expectedGram || 0) * (nursingQuantities[item.hcpc] ?? 1),
+					0,
+				);
+				const nursingTotalCost = finalNursingItems.reduce(
+					(sum, item) =>
+						sum +
+						parseFloat(nursingCostInputs[item.hcpc] ?? item.costGram ?? 0) *
+							(nursingQuantities[item.hcpc] ?? 1),
+					0,
+				);
+				// Per Diem totals
+				const perDiemTotalExpected = perDiemItems.reduce(
+					(sum, item, i) =>
+						sum + (item.expectedGram || 0) * (perDiemQuantities[i] ?? 1),
+					0,
+				);
+				const perDiemTotalCost = perDiemItems.reduce(
+					(sum, item, i) =>
+						sum +
+						parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) *
+							(perDiemQuantities[i] ?? 1),
+					0,
+				);
+				// Grand totals
+				const grandTotalExpected =
+					drugTotalExpected + nursingTotalExpected + perDiemTotalExpected;
+				const grandTotalCost =
+					drugTotalCost + nursingTotalCost + perDiemTotalCost;
+				const grandTotalProfit = grandTotalExpected - grandTotalCost;
+				const grandMargin =
+					grandTotalExpected > 0
+						? ((grandTotalProfit / grandTotalExpected) * 100).toFixed(2)
+						: '0.00';
+				return (
+					<Paper
+						variant='outlined'
+						sx={{
+							borderRadius: 'var(--radius-md)',
+							borderColor: 'var(--color-primary)',
+							padding: '24px',
+							backgroundColor: '#f0f7ff',
+							mb: 4,
+						}}
+					>
+						<Typography
+							variant='subtitle2'
+							sx={{
+								color: 'var(--color-primary)',
+								fontWeight: 700,
+								mb: 2,
+								letterSpacing: '0.01em',
+								fontSize: '0.8rem',
+								display: 'inline-block',
+								borderBottom: '2px solid var(--color-primary)',
+								paddingBottom: '2px',
+								textTransform: 'uppercase',
+							}}
+						>
+							Grand Total Summary
+						</Typography>
+						<TableContainer
+							component={Paper}
+							variant='outlined'
+							sx={{
+								borderColor: 'var(--color-primary)',
+								borderRadius: 'var(--radius-sm)',
+								backgroundColor: '#fff',
+							}}
+						>
+							<Table size='small'>
+								<TableHead>
+									<TableRow sx={{ backgroundColor: '#e8f0fe' }}>
+										<TableCell
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-text-main)',
+												borderColor: '#bfdbfe',
+												fontSize: '0.8rem',
+												width: '40%',
+											}}
+										>
+											Source
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-text-main)',
+												borderColor: '#bfdbfe',
+												fontSize: '0.8rem',
+											}}
+										>
+											Expected
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-text-main)',
+												borderColor: '#bfdbfe',
+												fontSize: '0.8rem',
+											}}
+										>
+											Cost
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-text-main)',
+												borderColor: '#bfdbfe',
+												fontSize: '0.8rem',
+											}}
+										>
+											Profit
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									<TableRow>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											Drug Cost
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{drugTotalExpected.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{drugTotalCost.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{(drugTotalExpected - drugTotalCost).toFixed(2)}
+										</TableCell>
+									</TableRow>
+									<TableRow>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											Final Nursing
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{nursingTotalExpected.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{nursingTotalCost.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{(nursingTotalExpected - nursingTotalCost).toFixed(2)}
+										</TableCell>
+									</TableRow>
+									<TableRow>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											Per Diem
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{perDiemTotalExpected.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{perDiemTotalCost.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{(perDiemTotalExpected - perDiemTotalCost).toFixed(2)}
+										</TableCell>
+									</TableRow>
+									<TableRow sx={{ backgroundColor: '#e8f0fe' }}>
+										<TableCell
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+											}}
+										>
+											Grand Total
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+											}}
+										>
+											{grandTotalExpected.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+											}}
+										>
+											{grandTotalCost.toFixed(2)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+											}}
+										>
+											{grandTotalProfit.toFixed(2)}
+										</TableCell>
+									</TableRow>
+									<TableRow sx={{ backgroundColor: '#dbeafe' }}>
+										<TableCell
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+											}}
+										>
+											Margin
+										</TableCell>
+										<TableCell
+											colSpan={3}
+											align='right'
+											sx={{
+												fontWeight: 700,
+												color: 'var(--color-primary)',
+												borderColor: '#bfdbfe',
+												fontSize: '1rem',
+											}}
+										>
+											{grandMargin}%
+										</TableCell>
+									</TableRow>
+								</TableBody>
+							</Table>
+						</TableContainer>
+					</Paper>
+				);
+			})()}
 
 			{/* Provider Profitability Section */}
 			<Paper
@@ -1083,8 +2083,14 @@ const Margin = () => {
 					Provider Profitability (Trailing 6 Months) Table
 				</Typography>
 
-				<Grid container spacing={2}>
-					<Grid item xs={12}>
+				<Grid
+					container
+					spacing={2}
+				>
+					<Grid
+						item
+						xs={12}
+					>
 						<Paper
 							variant='outlined'
 							sx={{
@@ -1094,7 +2100,10 @@ const Margin = () => {
 								maxWidth: '600px',
 							}}
 						>
-							<Grid container alignItems='center'>
+							<Grid
+								container
+								alignItems='center'
+							>
 								<Grid
 									item
 									sx={{
@@ -1104,11 +2113,17 @@ const Margin = () => {
 										minWidth: '150px',
 									}}
 								>
-									<Typography variant='caption' sx={{ fontWeight: 700, color: 'var(--color-text-main)' }}>
+									<Typography
+										variant='caption'
+										sx={{ fontWeight: 700, color: 'var(--color-text-main)' }}
+									>
 										Provider NPI
 									</Typography>
 								</Grid>
-								<Grid item xs>
+								<Grid
+									item
+									xs
+								>
 									<TextField
 										fullWidth
 										variant='standard'
@@ -1117,12 +2132,14 @@ const Margin = () => {
 										onChange={(e) => {
 											const val = e.target.value;
 											setNpiSearch(val);
-											const match = providerProfitabilityData.filter(p => p.NPI === val);
+											const match = providerProfitabilityData.filter(
+												(p) => p.NPI === val,
+											);
 											setMatchedProvider(match.length > 0 ? match : null);
 										}}
 										InputProps={{
 											disableUnderline: true,
-											sx: { px: 2, fontSize: '0.8rem', color: '#64748b' }
+											sx: { px: 2, fontSize: '0.8rem', color: '#64748b' },
 										}}
 									/>
 								</Grid>
@@ -1135,30 +2152,137 @@ const Margin = () => {
 					<TableContainer
 						component={Paper}
 						variant='outlined'
-						sx={{ borderColor: '#bfdbfe', borderRadius: 'var(--radius-sm)', mt: 2 }}
+						sx={{
+							borderColor: '#bfdbfe',
+							borderRadius: 'var(--radius-sm)',
+							mt: 2,
+						}}
 					>
 						<Table size='small'>
 							<TableHead>
 								<TableRow sx={{ backgroundColor: '#fff' }}>
-									<TableCell sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Payor Type</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Referral</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>SOC</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>Expected</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>COGS</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>GM</TableCell>
-									<TableCell align='right' sx={{ fontWeight: 700, color: 'var(--color-text-main)', borderColor: '#bfdbfe', fontSize: '0.8rem' }}>GM%</TableCell>
+									<TableCell
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										Payor Type
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										Referral
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										SOC
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										Expected
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										COGS
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										GM
+									</TableCell>
+									<TableCell
+										align='right'
+										sx={{
+											fontWeight: 700,
+											color: 'var(--color-text-main)',
+											borderColor: '#bfdbfe',
+											fontSize: '0.8rem',
+										}}
+									>
+										GM%
+									</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
 								{matchedProvider.map((row, index) => (
 									<TableRow key={index}>
-										<TableCell sx={{ color: '#64748b', borderColor: '#bfdbfe' }}>{row.Payor_Type}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{row.Referral}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{row.SOC}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{formatValue(row.Expected)}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{formatValue(row.COGS)}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{formatValue(row.GM)}</TableCell>
-										<TableCell align='right' sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}>{(row.GMPerCent * 100).toFixed(2)}%</TableCell>
+										<TableCell
+											sx={{ color: '#64748b', borderColor: '#bfdbfe' }}
+										>
+											{row.Payor_Type}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{row.Referral}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{row.SOC}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{formatValue(row.Expected)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{formatValue(row.COGS)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{formatValue(row.GM)}
+										</TableCell>
+										<TableCell
+											align='right'
+											sx={{ color: '#94a3b8', borderColor: '#bfdbfe' }}
+										>
+											{(row.GMPerCent * 100).toFixed(2)}%
+										</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
