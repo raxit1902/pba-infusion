@@ -7,13 +7,35 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import Stack from '@mui/material/Stack';
+import Popover from '@mui/material/Popover';
+import Divider from '@mui/material/Divider';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
+import Button from '@mui/material/Button';
 
 function Navbar() {
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
 	const user = {
 		name: 'Tom Cruise',
 		role: 'Admin',
 		avatar: '',
+		email: 'tom.cruise@example.com',
+		employeeId: 'EMP-20234',
+		department: 'Clinical Operations',
+		phone: '+1 (555) 234-5678',
 	};
+
+	const handleOpenFlyout = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleCloseFlyout = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
+
 	return (
 		<AppBar position='sticky'>
 			<div className='layout-container'>
@@ -54,8 +76,11 @@ function Navbar() {
 
 					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}></Box>
 					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip>
-							<IconButton sx={{ p: 0 }}>
+						<Tooltip title='Profile'>
+							<IconButton
+								sx={{ p: 0 }}
+								onClick={handleOpenFlyout}
+							>
 								<Stack
 									direction='row'
 									alignItems='center'
@@ -124,6 +149,125 @@ function Navbar() {
 								</Stack>
 							</IconButton>
 						</Tooltip>
+
+						{/* Profile Flyout */}
+						<Popover
+							open={open}
+							anchorEl={anchorEl}
+							onClose={handleCloseFlyout}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'right',
+							}}
+							transformOrigin={{
+								vertical: 'top',
+								horizontal: 'right',
+							}}
+							slotProps={{
+								paper: {
+									sx: {
+										mt: 1.5,
+										borderRadius: '12px',
+										minWidth: 300,
+										boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+										border: '1px solid var(--color-border)',
+										overflow: 'hidden',
+									},
+								},
+							}}
+						>
+							{/* Header */}
+							<Box
+								sx={{
+									background:
+										'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-shadow) 100%)',
+									px: 3,
+									py: 2.5,
+									display: 'flex',
+									alignItems: 'center',
+									gap: 2,
+								}}
+							>
+								<Avatar
+									alt={user.name}
+									sx={{
+										bgcolor: 'rgba(255,255,255,0.2)',
+										color: '#fff',
+										width: 52,
+										height: 52,
+										fontSize: '1.2rem',
+										fontWeight: 700,
+										border: '2px solid rgba(255,255,255,0.4)',
+									}}
+								>
+									{user.name
+										.split(' ')
+										.map((n) => n[0])
+										.join('')}
+								</Avatar>
+								<Stack>
+									<Typography
+										variant='subtitle1'
+										sx={{ color: '#fff', fontWeight: 700, lineHeight: 1.3 }}
+									>
+										{user.name}
+									</Typography>
+									<Typography
+										variant='caption'
+										sx={{
+											color: 'rgba(255,255,255,0.85)',
+											fontWeight: 500,
+											fontSize: '0.8rem',
+										}}
+									>
+										{user.role}
+									</Typography>
+								</Stack>
+							</Box>
+
+							{/* Details */}
+							<Box sx={{ px: 3, py: 2 }}>
+								<Stack spacing={1.5}>
+									<Stack
+										direction='row'
+										alignItems='center'
+										spacing={1.5}
+									>
+										<EmailOutlinedIcon
+											sx={{ fontSize: 18, color: 'var(--color-text-muted)' }}
+										/>
+										<Typography
+											variant='body2'
+											sx={{ color: 'var(--color-text-main)' }}
+										>
+											{user.email}
+										</Typography>
+									</Stack>
+								</Stack>
+							</Box>
+
+							<Divider />
+
+							{/* Footer */}
+							<Box sx={{ px: 3, py: 1.5 }}>
+								<Button
+									fullWidth
+									startIcon={<LogoutIcon />}
+									sx={{
+										justifyContent: 'flex-start',
+										color: 'var(--color-text-muted)',
+										textTransform: 'none',
+										fontWeight: 500,
+										'&:hover': {
+											backgroundColor: 'rgba(211, 47, 47, 0.08)',
+											color: '#d32f2f',
+										},
+									}}
+								>
+									Sign Out
+								</Button>
+							</Box>
+						</Popover>
 					</Box>
 				</Toolbar>
 			</div>
