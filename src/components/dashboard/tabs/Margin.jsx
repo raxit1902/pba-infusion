@@ -13,6 +13,8 @@ import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -35,7 +37,10 @@ const Margin = () => {
 	const [payorCostData, setPayorCostData] = useState(null);
 	const [finalNursingItems, setFinalNursingItems] = useState([]);
 	const [nursingQuantities, setNursingQuantities] = useState({});
-	const [nursingCostInputs, setNursingCostInputs] = useState({});
+	const [nursingCostInputs, setNursingCostInputs] = useState({
+		99601: '75.00',
+		99602: '120.00',
+	});
 	const [perDiemItems, setPerDiemItems] = useState([]);
 	const [perDiemQuantities, setPerDiemQuantities] = useState({});
 	const [perDiemCostInputs, setPerDiemCostInputs] = useState({});
@@ -60,6 +65,7 @@ const Margin = () => {
 	const [selectedContraindications, setSelectedContraindications] = useState(
 		[],
 	);
+	const [activePerDiem, setActivePerDiem] = useState('');
 
 	const selectedMrn = usePatientStore((state) => state.selectedMrn);
 
@@ -69,11 +75,15 @@ const Margin = () => {
 		setFinalNursingItems(
 			items.filter((item) => nursingHcpcs.includes(item.hcpc)),
 		);
-		setPerDiemItems(
-			items.filter((item) =>
-				item.cleanDrug?.toLowerCase().startsWith('per diem'),
-			),
+		const pdItems = items.filter((item) =>
+			item.cleanDrug?.toLowerCase().startsWith('per diem'),
 		);
+		setPerDiemItems(pdItems);
+		if (pdItems.length > 0) {
+			setActivePerDiem(pdItems[0].cleanDrug);
+		} else {
+			setActivePerDiem('');
+		}
 		const allDrugs = items.filter(
 			(item) =>
 				!nursingHcpcs.includes(item.hcpc) &&
@@ -926,7 +936,7 @@ const Margin = () => {
 														},
 														inputProps: { min: 0, step: 1 },
 													}}
-													sx={{ width: '80px', ml: 'auto' }}
+													sx={{ width: '100px', ml: 'auto' }}
 												/>
 											</TableCell>
 											<TableCell
@@ -959,14 +969,14 @@ const Margin = () => {
 										(sum, item, index) =>
 											sum +
 											(item.expectedGram || 0) *
-												(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+											(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
 										0,
 									);
 									const drugTotalCost = filteredDrugItems.reduce(
 										(sum, item, index) =>
 											sum +
 											(item.costGram || 0) *
-												(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+											(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
 										0,
 									);
 									const drugTotalProfit = (
@@ -1329,8 +1339,9 @@ const Margin = () => {
 								const label =
 									item.hcpc === '99601' ? '99601 Quantity' : '99602 Hours';
 								const qty = nursingQuantities[item.hcpc] ?? 1;
+								const defaultCost = item.hcpc === '99601' ? '75.00' : '120.00';
 								const enteredCost =
-									nursingCostInputs[item.hcpc] ?? item.costGram ?? 0;
+									nursingCostInputs[item.hcpc] ?? item.costGram ?? defaultCost;
 								const expected = ((item.expectedGram || 0) * qty).toFixed(2);
 								const cost = (parseFloat(enteredCost) * qty).toFixed(2);
 								const profit = (expected - cost).toFixed(2);
@@ -1370,7 +1381,7 @@ const Margin = () => {
 													},
 													inputProps: { min: 0, step: 1 },
 												}}
-												sx={{ width: '80px', ml: 'auto' }}
+												sx={{ width: '100px', ml: 'auto' }}
 											/>
 										</TableCell>
 										<TableCell
@@ -1402,7 +1413,7 @@ const Margin = () => {
 													},
 													inputProps: { min: 0, step: 0.01 },
 												}}
-												sx={{ width: '80px', ml: 'auto' }}
+												sx={{ width: '100px', ml: 'auto' }}
 											/>
 										</TableCell>
 										<TableCell
@@ -1432,16 +1443,20 @@ const Margin = () => {
 										(sum, item) =>
 											sum +
 											(item.expectedGram || 0) *
-												(nursingQuantities[item.hcpc] ?? 1),
+											(nursingQuantities[item.hcpc] ?? 1),
 										0,
 									);
 									const nursingTotalCost = finalNursingItems.reduce(
-										(sum, item) =>
-											sum +
-											parseFloat(
-												nursingCostInputs[item.hcpc] ?? item.costGram ?? 0,
-											) *
-												(nursingQuantities[item.hcpc] ?? 1),
+										(sum, item) => {
+											const defaultCost = item.hcpc === '99601' ? '75.00' : '120.00';
+											return (
+												sum +
+												parseFloat(
+													nursingCostInputs[item.hcpc] ?? item.costGram ?? defaultCost,
+												) *
+												(nursingQuantities[item.hcpc] ?? 1)
+											);
+										},
 										0,
 									);
 									const nursingTotalProfit = (
@@ -1511,22 +1526,43 @@ const Margin = () => {
 					mb: 4,
 				}}
 			>
-				<Typography
-					variant='subtitle2'
-					sx={{
-						color: 'var(--color-primary)',
-						fontWeight: 700,
-						mb: 2,
-						letterSpacing: '0.01em',
-						fontSize: '0.8rem',
-						display: 'inline-block',
-						borderBottom: '2px solid var(--color-primary)',
-						paddingBottom: '2px',
-						textTransform: 'uppercase',
-					}}
-				>
-					Per Diem Table
-				</Typography>
+				<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+					<Typography
+						variant='subtitle2'
+						sx={{
+							color: 'var(--color-primary)',
+							fontWeight: 700,
+							letterSpacing: '0.01em',
+							fontSize: '0.8rem',
+							display: 'inline-block',
+							borderBottom: '2px solid var(--color-primary)',
+							paddingBottom: '2px',
+							textTransform: 'uppercase',
+						}}
+					>
+						Per Diem Table
+					</Typography>
+					{perDiemItems.length > 0 && (
+						<ToggleButtonGroup
+							color='primary'
+							value={activePerDiem}
+							exclusive
+							onChange={(e, newActive) => {
+								if (newActive !== null) {
+									setActivePerDiem(newActive);
+								}
+							}}
+							size='small'
+							sx={{ height: '32px' }}
+						>
+							{perDiemItems.map((item) => (
+								<ToggleButton key={item.cleanDrug} value={item.cleanDrug} sx={{ textTransform: 'none', px: 2, py: 0, fontSize: '0.8rem' }}>
+									{item.cleanDrug}
+								</ToggleButton>
+							))}
+						</ToggleButtonGroup>
+					)}
+				</Box>
 
 				<TableContainer
 					component={Paper}
@@ -1598,6 +1634,7 @@ const Margin = () => {
 						</TableHead>
 						<TableBody>
 							{perDiemItems.map((item, index) => {
+								if (item.cleanDrug !== activePerDiem) return null;
 								const qty = perDiemQuantities[index] ?? 1;
 								const enteredCost =
 									perDiemCostInputs[index] ?? item.costGram ?? 0;
@@ -1640,7 +1677,7 @@ const Margin = () => {
 													},
 													inputProps: { min: 0, step: 1 },
 												}}
-												sx={{ width: '80px', ml: 'auto' }}
+												sx={{ width: '100px', ml: 'auto' }}
 											/>
 										</TableCell>
 										<TableCell
@@ -1672,7 +1709,7 @@ const Margin = () => {
 													},
 													inputProps: { min: 0, step: 0.01 },
 												}}
-												sx={{ width: '80px', ml: 'auto' }}
+												sx={{ width: '100px', ml: 'auto' }}
 											/>
 										</TableCell>
 										<TableCell
@@ -1696,72 +1733,7 @@ const Margin = () => {
 									</TableRow>
 								);
 							})}
-							{perDiemItems.length > 0 &&
-								(() => {
-									const perDiemTotalExpected = perDiemItems.reduce(
-										(sum, item, i) =>
-											sum +
-											(item.expectedGram || 0) * (perDiemQuantities[i] ?? 1),
-										0,
-									);
-									const perDiemTotalCost = perDiemItems.reduce(
-										(sum, item, i) =>
-											sum +
-											parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) *
-												(perDiemQuantities[i] ?? 1),
-										0,
-									);
-									const perDiemTotalProfit = (
-										perDiemTotalExpected - perDiemTotalCost
-									).toFixed(2);
-									return (
-										<TableRow sx={{ backgroundColor: '#f8fafc' }}>
-											<TableCell
-												sx={{
-													fontWeight: 700,
-													color: 'var(--color-text-main)',
-													borderColor: '#bfdbfe',
-												}}
-											>
-												Total
-											</TableCell>
-											<TableCell
-												colSpan={2}
-												sx={{ borderColor: '#bfdbfe' }}
-											></TableCell>
-											<TableCell
-												align='right'
-												sx={{
-													fontWeight: 700,
-													color: '#94a3b8',
-													borderColor: '#bfdbfe',
-												}}
-											>
-												{perDiemTotalExpected.toFixed(2)}
-											</TableCell>
-											<TableCell
-												align='right'
-												sx={{
-													fontWeight: 700,
-													color: '#94a3b8',
-													borderColor: '#bfdbfe',
-												}}
-											>
-												{perDiemTotalCost.toFixed(2)}
-											</TableCell>
-											<TableCell
-												align='right'
-												sx={{
-													fontWeight: 700,
-													color: '#94a3b8',
-													borderColor: '#bfdbfe',
-												}}
-											>
-												{perDiemTotalProfit}
-											</TableCell>
-										</TableRow>
-									);
-								})()}
+
 						</TableBody>
 					</Table>
 				</TableContainer>
@@ -1777,14 +1749,14 @@ const Margin = () => {
 					(sum, item, index) =>
 						sum +
 						(item.expectedGram || 0) *
-							(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+						(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
 					0,
 				);
 				const drugTotalCost = filteredDrugItems.reduce(
 					(sum, item, index) =>
 						sum +
 						(item.costGram || 0) *
-							(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
+						(drugQuantities[item.cleanDrug + '_' + index] ?? 1),
 					0,
 				);
 				// Final Nursing totals
@@ -1795,25 +1767,25 @@ const Margin = () => {
 					0,
 				);
 				const nursingTotalCost = finalNursingItems.reduce(
-					(sum, item) =>
-						sum +
-						parseFloat(nursingCostInputs[item.hcpc] ?? item.costGram ?? 0) *
-							(nursingQuantities[item.hcpc] ?? 1),
+					(sum, item) => {
+						const defaultCost = item.hcpc === '99601' ? '75.00' : '120.00';
+						return (
+							sum +
+							parseFloat(nursingCostInputs[item.hcpc] ?? item.costGram ?? defaultCost) *
+							(nursingQuantities[item.hcpc] ?? 1)
+						);
+					},
 					0,
 				);
 				// Per Diem totals
-				const perDiemTotalExpected = perDiemItems.reduce(
-					(sum, item, i) =>
-						sum + (item.expectedGram || 0) * (perDiemQuantities[i] ?? 1),
-					0,
-				);
-				const perDiemTotalCost = perDiemItems.reduce(
-					(sum, item, i) =>
-						sum +
-						parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) *
-							(perDiemQuantities[i] ?? 1),
-					0,
-				);
+				const perDiemTotalExpected = perDiemItems.reduce((sum, item, i) => {
+					if (item.cleanDrug !== activePerDiem) return sum;
+					return sum + (item.expectedGram || 0) * (perDiemQuantities[i] ?? 1);
+				}, 0);
+				const perDiemTotalCost = perDiemItems.reduce((sum, item, i) => {
+					if (item.cleanDrug !== activePerDiem) return sum;
+					return sum + parseFloat(perDiemCostInputs[i] ?? item.costGram ?? 0) * (perDiemQuantities[i] ?? 1);
+				}, 0);
 				// Grand totals
 				const grandTotalExpected =
 					drugTotalExpected + nursingTotalExpected + perDiemTotalExpected;
